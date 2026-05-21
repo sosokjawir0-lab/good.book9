@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good Book - Smart Library Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<style>
+  /* --- VARIABEL TEMA (SOFT PINK & GREEN) --- */
+  :root {
+    --primary-bg: #FFF5F7;
+    --secondary-bg: #FFFFFF;
+    --accent-pink: #F472B6;
+    --accent-pink-dark: #DB2777;
+    --accent-pink-light: #FBCFE8;
+    --accent-green: #34D399;
+    --accent-green-dark: #059669;
+    --text-main: #374151;
+    --text-soft: #6B7280;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --shadow-sm: 0 4px 6px -1px rgba(244, 114, 182, 0.1);
+    --shadow-lg: 0 10px 25px -5px rgba(244, 114, 182, 0.15);
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+  html { scroll-behavior: smooth; }
+  
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background-color: var(--primary-bg); 
+    color: var(--text-main); 
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--text-main); }
+  a { text-decoration: none; color: inherit; transition: 0.3s; }
+  ul { list-style: none; }
+  img { max-width: 100%; display: block; }
+
+  /* --- COMPONENTS --- */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .section-padding { padding: 80px 0; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; border: none;
+  }
+  .btn-primary { background: var(--accent-pink); color: white; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4); }
+  .btn-primary:hover { background: var(--accent-pink-dark); transform: translateY(-2px); }
+  .btn-secondary { background: white; color: var(--text-main); border: 2px solid #FBCFE8; }
+  .btn-secondary:hover { border-color: var(--accent-pink); color: var(--accent-pink); }
+  .btn-green { background: var(--accent-green); color: white; }
+  .btn-green:hover { background: var(--accent-green-dark); }
+
+    /* --- NAVIGATION --- */
+  nav {
+    position: sticky; 
+    top: 20px; 
+    margin: 0 20px; 
+    width: calc(100% - 40px);
+    max-width: 1200px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    background: var(--glass-bg); 
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border); 
+    border-radius: 100px;
+    z-index: 1000; 
+    box-shadow: var(--shadow-sm);
+    height: 70px;                  
+    display: flex; 
+    align-items: center;           
+    justify-content: space-between; 
+    padding: 0 30px;
+  }
+
+  .logo { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--text-main); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    font-family: 'Playfair Display', serif; 
+  }
+  .logo span { color: var(--accent-pink); }
+  
+  .nav-menu { 
+    display: flex; 
+    gap: 15px; 
+    margin: 0;  
+    padding: 0; 
+  }
+
+  .nav-menu a { 
+    font-size: 16px; 
+    font-weight: 600; 
+    color: var(--text-main); 
+    position: relative;
+    display: inline-flex; 
+    align-items: center;  
+    height: 100%;         
+  }
+  
+  .nav-menu a:hover, .nav-menu a.active { color: var(--accent-pink); }
+  
+  .mobile-toggle { 
+    display: none; 
+    font-size: 28px; 
+    cursor: pointer; 
+  }
+
+
+  /* --- HERO --- */
+  .hero { padding: 60px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; min-height: 80vh; }
+  .hero-text h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 20px; }
+  .hero-text h1 span { background: linear-gradient(120deg, var(--accent-pink) 0%, var(--accent-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-text p { font-size: 1.1rem; color: var(--text-soft); margin-bottom: 30px; max-width: 90%; }
+  
+  .hero-card-wrapper { position: relative; }
+  .hero-card { padding: 10px; border-radius: var(--radius-xl); transform: rotate(-2deg); transition: 0.5s; }
+  .hero-card:hover { transform: rotate(0deg); }
+  .hero-card img { width: 100%; border-radius: var(--radius-lg); height: 500px; object-fit: cover; }
+
+  /* --- PROFILE TABS --- */
+  .profile-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+  .tab-btn { padding: 10px 30px; border-radius: 30px; background: white; border: 1px solid #eee; cursor: pointer; font-weight: 600; color: var(--text-soft); transition: 0.3s; }
+  .tab-btn.active { background: var(--accent-pink); color: white; border-color: var(--accent-pink); box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3); }
+  
+  .tab-content { display: none; background: white; padding: 40px; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); animation: fadeIn 0.5s; }
+  .tab-content.active { display: block; }
+  .org-structure { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .org-box { background: #F9FAFB; padding: 20px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-green); width: 100%; max-width: 600px; }
+
+  /* --- SERVICES --- */
+  .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+  .service-card { background: white; padding: 30px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; border: 1px solid #fff; }
+  .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); cursor: pointer; }
+  .s-icon { width: 60px; height: 60px; background: #ECFDF5; color: var(--accent-green-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
+
+  /* --- MULTIMEDIA MUSIC PLAYER SECTION (NEW) --- */
+  .music-section-wrapper {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Playlist lebih lebar */
+    min-height: 500px;
+  }
+  
+  /* Left Side: Playlist */
+  .music-playlist {
+    padding: 30px;
+    background: #FAFAFA;
+    border-right: 1px solid #eee;
+    overflow-y: auto;
+    max-height: 600px;
+  }
+  
+  .playlist-header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .song-list { display: flex; flex-direction: column; gap: 10px; }
+  
+  .song-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  
+  .song-item:hover {
+    border-color: var(--accent-pink-light);
+    background: #FFF5F7;
+  }
+  
+  .song-item.active {
+    background: var(--accent-pink);
+    color: white;
+    box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3);
+  }
+  
+  .song-item.active .song-meta .song-artist, 
+  .song-item.active .song-meta .song-duration {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .song-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+    background: #eee;
+  }
+  
+  .song-info { flex: 1; }
+  .song-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .song-artist { font-size: 0.8rem; color: var(--text-soft); }
+  
+  .play-icon-small {
+    margin-left: auto;
+    opacity: 0.5;
+  }
+  .song-item.active .play-icon-small { opacity: 1; color: white; }
+
+  /* Right Side: Player Interface */
+  .music-player {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(135deg, #FFF0F5 0%, #FFFFFF 100%);
+  }
+
+  .disc-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+    width: 220px;
+    height: 220px;
+  }
+
+  .disc-art {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border: 4px solid white;
+    animation: rotateDisc 10s linear infinite;
+    animation-play-state: paused; /* Default paused */
+  }
+
+  .disc-art.playing {
+    animation-play-state: running;
+  }
+
+  .player-info { text-align: center; margin-bottom: 30px; width: 100%; }
+  .player-title { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+  .player-artist { font-size: 1rem; color: var(--accent-pink); font-weight: 600; }
+
+  .progress-area {
+    width: 100%;
+    margin-bottom: 25px;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #E5E7EB;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .progress-current {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-pink);
+    border-radius: 10px;
+    position: relative;
+  }
+  
+  .progress-current::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: -3px;
+    width: 12px;
+    height: 12px;
+    background: var(--accent-pink-dark);
+    border-radius: 50%;
+    opacity: 0;
+    transition: 0.2s;
+  }
+  
+  .progress-bar:hover .progress-current::after { opacity: 1; }
+
+  .timer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    margin-top: 8px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ctrl-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ctrl-btn:hover { color: var(--accent-pink); }
+  .ctrl-btn.main-play {
+    width: 60px;
+    height: 60px;
+    background: var(--accent-pink);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
+  }
+  .ctrl-btn.main-play:hover {
+    background: var(--accent-pink-dark);
+    transform: scale(1.1);
+    color: white;
+  }
+
+  @keyframes rotateDisc {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* --- CATALOG / OPAC --- */
+  .catalog-container { background: white; padding: 40px; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+  .catalog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+  .search-box { position: relative; width: 300px; }
+  .search-box input { width: 100%; padding: 12px 20px 12px 45px; border-radius: 30px; border: 1px solid #E5E7EB; background: #F9FAFB; }
+  .search-box span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-soft); }
+  
+  .filter-group { display: flex; gap: 10px; }
+  .filter-chip { padding: 8px 16px; border-radius: 20px; background: #F3F4F6; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+  .filter-chip.active, .filter-chip:hover { background: var(--accent-pink); color: white; }
+
+  .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+  .book-item { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #f0f0f0; transition: 0.3s; position: relative; }
+  .book-item:hover { box-shadow: var(--shadow-lg); transform: translateY(-5px); }
+  .book-cover { height: 250px; background: #FDF2F8; display: flex; align-items: center; justify-content: center; padding: 15px; }
+  .book-cover img { max-height: 100%; object-fit: contain; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+  .book-details { padding: 15px; }
+  .book-title { font-weight: 700; font-size: 1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .book-author { font-size: 0.85rem; color: var(--text-soft); }
+  .book-overlay {
+    position: absolute; inset: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: 0.3s; flex-direction: column; gap: 10px;
+  }
+  .book-item:hover .book-overlay { opacity: 1; }
+
+  /* --- FAQ ACCORDION --- */
+  .faq-item { background: white; border-radius: var(--radius-lg); margin-bottom: 15px; border: 1px solid #eee; overflow: hidden; }
+  .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; transition: 0.3s; }
+  .faq-question:hover { background: #FFF5F7; color: var(--accent-pink); }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; color: var(--text-soft); }
+  .faq-item.active .faq-answer { padding: 0 20px 20px; max-height: 200px; }
+  .faq-icon { transition: transform 0.3s; }
+  .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--accent-pink); }
+
+  /* --- EVENTS & NEWS --- */
+  .event-card { display: flex; background: white; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 30px; box-shadow: var(--shadow-sm); }
+  .event-date { background: var(--accent-pink); color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px; text-align: center; }
+  .event-date span.day { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .event-content { padding: 25px; flex: 1; }
+
+  .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+  .news-card { background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .news-img { height: 180px; background: #eee; }
+  .news-img img { width: 100%; height: 100%; object-fit: cover; }
+  .news-body { padding: 20px; }
+  
+  .news-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+  /* --- CONTACT --- */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .contact-form { background: white; padding: 40px; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+  .form-control { width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 10px; font-family: inherit; transition: 0.3s; }
+  .form-control:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.1); }
+  .map-container { height: 100%; min-height: 400px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
+
+  /* --- MODAL & TOAST --- */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000;
+    display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: white; width: 90%; max-width: 700px; border-radius: 24px; padding: 30px; position: relative; animation: slideUp 0.3s; display: flex; gap: 30px; flex-wrap: wrap; }
+  .modal-img { flex: 1; min-width: 200px; }
+  .modal-img img { width: 100%; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+  .modal-info { flex: 1.5; min-width: 250px; }
+  .close-modal { position: absolute; top: 15px; right: 15px; background: #f3f4f6; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  
+  .toast {
+    position: fixed; bottom: 30px; right: 30px; background: white; padding: 15px 25px; border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 5px solid var(--accent-green); display: flex; align-items: center; gap: 10px;
+    transform: translateY(100px); opacity: 0; transition: 0.4s; z-index: 3000;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  
+  /* Fix agar tombol di dalam modal bisa diklik */
+  .modal-box {
+    position: relative;
+    z-index: 10; /* Pastikan kotak modal di atas overlay */
+    background: white;
+  }
+
+  /* Styling khusus tombol Sinopsis agar jelas dan bisa diklik */
+  #btnSynopsis {
+    z-index: 20; /* Lebih tinggi dari elemen lain di dalam modal */
+    position: relative;
+    display: block; /* Paksa muncul */
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--accent-pink); /* Garis pinggir tebal */
+    background-color: transparent;
+    color: var(--accent-pink);
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer; /* Ubah cursor jadi tangan */
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  #btnSynopsis:hover {
+    background-color: var(--accent-pink);
+    color: white;
+    transform: scale(1.02);
+  }
+
+  /* --- FOOTER --- */
+  footer { background: white; border-top: 1px solid #eee; padding: 60px 0 20px; margin-top: 80px; }
+  .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid #f0f0f0; color: var(--text-soft); font-size: 0.9rem; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* --- RESPONSIVE --- */
+  @media(max-width: 768px) {
+    .hero { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
+    .hero-text h1 { font-size: 2.5rem; }
+    .nav-menu { display: none; position: absolute; top: 80px; left: 0; width: 100%; background: white; flex-direction: column; padding: 20px; border-radius: 20px; box-shadow: var(--shadow-lg); text-align: center; }
+    .nav-menu.active { display: flex; }
+    .mobile-toggle { display: block; }
+    .modal-box { flex-direction: column; max-height: 90vh; overflow-y: auto; }
+    .event-card { flex-direction: column; }
+    .event-date { width: 100%; flex-direction: row; gap: 10px; padding: 10px; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; text-align: center; }
+    
+    /* Music Player Responsive */
+    .music-section-wrapper { grid-template-columns: 1fr; }
+    .music-playlist { max-height: 300px; border-right: none; border-bottom: 1px solid #eee; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <span class="material-icons-round" style="color:var(--accent-pink)">auto_stories</span>
+    Nove<span>Library</span>
+  </a>
+  <div class="mobile-toggle" onclick="toggleMenu()">
+    <span class="material-icons-round">menu</span>
+  </div>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="#home">Beranda</a></li>
+    <li><a href="#profile">Profil</a></li>
+    <li><a href="#services">Layanan</a></li>
+    <li><a href="#catalog">Katalog</a></li>
+    <li><a href="#events">Agenda</a></li>
+    <li><a href="#contact">Kontak</a></li>
+    <li><a href="#" class="btn btn-green" style="padding: 8px 20px; font-size: 0.9rem;">Masuk Anggota</a></li>
+  </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero container" id="home">
+  <div class="hero-text">
+    <h1>Jelajahi Dunia <br><span>Pengetahuan Tanpa Batas</span></h1>
+    <p>Platform perpustakaan modern dengan akses ribuan koleksi digital, jurnal ilmiah, dan fasilitas baca yang nyaman untuk mencerdaskan kehidupan bangsa.</p>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+      <a href="#catalog" class="btn btn-primary">
+        <span class="material-icons-round">search</span> Cari Buku
+      </a>
+      <a href="#profile" class="btn btn-secondary">
+        <span class="material-icons-round">info</span> Tentang Kami
+      </a>
+    </div>
+  </div>
+  <div class="hero-card-wrapper">
+    <div class="hero-card">
+      <img src="web logo.png" alt="Library Interior">
+    </div>
+  </div>
+</section>
+
+<!-- PROFILE SECTION (TABS) -->
+<section class="section-padding container" id="profile">
+  <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+    <h2>Profil Perpustakaan</h2>
+    <p style="color: var(--text-soft);">Mengenal lebih dekat Good Book</p>
+  </div>
+
+  <div class="profile-tabs">
+    <button class="tab-btn active" onclick="openTab(event, 'about')">Tentang Kami</button>
+    <button class="tab-btn" onclick="openTab(event, 'vision')">Visi & Misi</button>
+    <button class="tab-btn" onclick="openTab(event, 'structure')">Struktur Organisasi</button>
+  </div>
+
+  <div id="about" class="tab-content active">
+    <h3 style="margin-bottom: 15px;">Selamat Datang di Good Book</h3>
+    <p style="margin-bottom: 15px;">Good Book merupakan pusat informasi dan literasi yang berkomitmen menyediakan layanan perpustakaan berbasis teknologi untuk mendukung kegiatan pendidikan, 
+	penelitian, dan pengembangan pengetahuan. Dengan memanfaatkan sistem digital, perpustakaan menghadirkan akses informasi yang cepat, mudah, dan efisien bagi seluruh pengguna.</p>
+    <p>Didirikan pada tahun 2024, Perpustakaan kami terus berkembang sebagai sarana pembelajaran modern yang mampu menjawab kebutuhan informasi di era digital. 
+	Perpustakaan menyediakan berbagai koleksi cetak maupun digital yang dapat dimanfaatkan oleh banyak kalangan.</p>
+	<br>
+	<p>Web ini didirikan sebagai upaya meningkatkan layanan perpustakaan berbasis digital. Dibuat untuk memudahkan pengguna dalam mengakses informasi perpustakaan seperti katalog buku, layanan peminjaman, serta informasi kegiatan perpustakaan secara online.
+	Dengan adanya web ini, kami berharap pelayanan di perpustakaan bisa menjadi lebih cepat, mudah, dan dapat diakses kapan saja.</p>
+  </div>
+
+  <div id="vision" class="tab-content">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div>
+        <h3 style="color: var(--accent-pink); margin-bottom: 10px;">Visi</h3>
+        <p>Menjadi pusat informasi dan literasi yang modern, inovatif, serta mendukung pengembangan ilmu pengetahuan dan budaya membaca bagi seluruh pengguna perpustakaan.</p>
+      </div>
+      <div>
+        <h3 style="color: var(--accent-green); margin-bottom: 10px;">Misi</h3>
+        <ul style="list-style: disc; padding-left: 20px; color: var(--text-soft);">
+          <li>Menyediakan koleksi buku dan sumber informasi yang lengkap serta berkualitas.</li>
+          <li>Memberikan pelayanan perpustakaan yang cepat, ramah, dan mudah diakses.</li>
+          <li>Meningkatkan minat baca dan literasi digital masyarakat.</li>
+          <li>Mendukung kegiatan belajar, penelitian, dan pengembangan pengetahuan.</li>
+		  <li>Mengembangkan sistem perpustakaan berbasis teknologi untuk memudahkan akses informasi.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="structure" class="tab-content">
+    <div class="org-structure">
+      <div class="org-box" style="text-align: center; border-left-color: var(--accent-pink); background: #FFF5F7;">
+        <strong>Kepala Perpustakaan</strong><br>Rizki Dimas Anugrah
+      </div>
+      <div style="display: flex; gap: 20px; width: 100%; justify-content: center; flex-wrap: wrap;">
+        <div class="org-box">
+          <strong>Kabid Pelayanan</strong><br>Faza Izzulhaq
+        </div>
+        <div class="org-box">
+          <strong>Kabid Pengembangan</strong><br>Aulia Putri
+        </div>
+        <div class="org-box">
+          <strong>Kabid Teknologi Informasi</strong><br>Alifa Zahrotun Nasywa
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAYANAN & KOLEKSI -->
+<section class="section-padding container" id="services">
+  <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+    <h2>Layanan Kami</h2>
+    <p style="color: var(--text-soft);">Fasilitas dan layanan prima untuk kenyamanan Anda</p>
+  </div>
+  
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="s-icon"><span class="material-icons-round">sync_alt</span></div>
+      <h4>Sirkulasi</h4>
+      <p style="font-size: 0.9rem; color: var(--text-soft);">Layanan peminjaman dan pengembalian buku fisik dengan sistem cepat.</p>
+    </div>
+    <div class="service-card">
+      <div class="s-icon"><span class="material-icons-round">menu_book</span></div>
+      <h4>Bebas Pustaka</h4>
+      <p style="font-size: 0.9rem; color: var(--text-soft);">Layanan referensi untuk tugas akhir, skripsi, tesis, dan disertasi.</p>
+    </div>
+    <div class="service-card">
+      <div class="s-icon"><span class="material-icons-round">wifi</span></div>
+      <h4>Internet Area</h4>
+      <p style="font-size: 0.9rem; color: var(--text-soft);">Akses wifi gratis khusus anggota perpustakaan untuk riset.</p>
+    </div>
+    <!-- DIUBAH: Menambahkan onclick untuk scroll ke Multimedia Section -->
+    <div class="service-card" onclick="document.getElementById('multimedia-zone').scrollIntoView({behavior: 'smooth'})">
+      <div class="s-icon" style="background: #FFF5F7; color: var(--accent-pink);"><span class="material-icons-round">headphones</span></div>
+      <h4>Multimedia</h4>
+      <p style="font-size: 0.9rem; color: var(--text-soft);">Klik untuk membuka ruang mendengarkan musik dan audio book.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KATALOG OPAC -->
+<section class="section-padding" style="background: white;" id="catalog">
+  <div class="container catalog-container">
+    <div class="catalog-header">
+      <h2>Katalog Online (OPAC)</h2>
+      <div class="search-box">
+        <span class="material-icons-round">search</span>
+        <input type="text" id="searchInput" placeholder="Cari Judul, Penulis, ISBN...">
+      </div>
+    </div>
+
+    <div class="filter-group" style="margin-bottom: 30px;">
+      <div class="filter-chip active" onclick="filterBooks('all', this)">Semua</div>
+      <div class="filter-chip" onclick="filterBooks('Buku Fiksi', this)">Fiksi</div>
+      <div class="filter-chip" onclick="filterBooks('Buku Pelajaran', this)">Pelajaran</div>
+      <div class="filter-chip" onclick="filterBooks('Jurnal', this)">Jurnal</div>
+      <div class="filter-chip" onclick="filterBooks('Skripsi', this)">Skripsi</div>
+    </div>
+
+    <div class="book-grid" id="bookGrid">
+      <!-- Buku akan dirender via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- === BAGIAN BARU: MULTIMEDIA MUSIC PLAYER === -->
+<section class="section-padding container" id="multimedia-zone" style="background: linear-gradient(to bottom, var(--primary-bg), white);">
+  <div class="section-header" style="text-align: center; margin-bottom: 40px;">
+    <span class="material-icons-round" style="font-size: 48px; color: var(--accent-pink);">library_music</span>
+    <h2 style="margin-top: 10px;">Layanan Multimedia</h2>
+    <p style="color: var(--text-soft);">Pilih musik pengiring suasana belajar yang menenangkan</p>
+  </div>
+
+  <div class="music-section-wrapper">
+    <!-- Kolom Kiri: Playlist -->
+    <div class="music-playlist">
+      <div class="playlist-header">
+        <h3>Playlist Koleksi</h3>
+        <span style="font-size: 0.85rem; color: var(--text-soft);">5 Lagu Tersedia</span>
+      </div>
+      
+      <div class="song-list" id="songListContainer">
+        <!-- Item lagu akan digenerate oleh JavaScript -->
+      </div>
+    </div>
+
+    <!-- Kolom Kanan: Player -->
+    <div class="music-player">
+      <div class="disc-wrapper">
+        <img src="https://picsum.photos/seed/music1/300/300" alt="Album Art" class="disc-art" id="mainDisc">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);"></div>
+      </div>
+
+      <div class="player-info">
+        <div class="player-title" id="mainTitle">Pilih Lagu</div>
+        <div class="player-artist" id="mainArtist">Good Book Audio</div>
+      </div>
+
+      <div class="progress-area">
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-current" id="progressCurrent"></div>
+        </div>
+        <div class="timer">
+          <span id="currentTime">00:00</span>
+          <span id="durationTime">00:00</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn" onclick="prevSong()" title="Sebelumnya">
+          <span class="material-icons-round">skip_previous</span>
+        </button>
+        <button class="ctrl-btn main-play" onclick="togglePlay()" id="playPauseBtn">
+          <span class="material-icons-round">play_arrow</span>
+        </button>
+        <button class="ctrl-btn" onclick="nextSong()" title="Selanjutnya">
+          <span class="material-icons-round">skip_next</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- === END MULTIMEDIA SECTION === -->
+
+<!-- PANDUAN & FAQ -->
+<section class="section-padding container" id="faq">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px;">
+    <div>
+      <h2 style="margin-bottom: 20px;">Panduan & Aturan</h2>
+      <div style="background: white; padding: 25px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 20px;">
+        <h4 style="color: var(--accent-green); margin-bottom: 10px;">Panduan Penggunaan</h4>
+        <p style="font-size: 0.9rem; color: var(--text-soft);">1. Login menggunakan akun anggota perpustakaan.
+		<br>2. Gunakan fitur pencarian untuk menemukan buku atau referensi yang dibutuhkan.
+		<br>3. Pilih buku yang ingin dipinjam lalu lakukan proses peminjaman.
+		<br>4. Kembalikan buku tepat waktu sesuai tanggal yang ditentukan.
+		</p>
+      </div>
+      <div style="background: white; padding: 25px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+        <h4 style="color: var(--accent-pink); margin-bottom: 10px;">Aturan Perpustakaan</h4>
+        <ul style="font-size: 0.9rem; color: var(--text-soft); padding-left: 20px; list-style: disc;">
+          <li>Menjaga ketenangan selama berada di area perpustakaan.</li>
+          <li>Dilarang makan dan minum di area koleksi buku..</li>
+          <li>Tidak merusak, mencoret, atau menghilangkan buku.</li>
+		  <li>Mengembalikan buku sesuai batas waktu peminjaman.</li>
+		  <li>Menjaga kebersihan dan kenyamanan fasilitas perpustakaan.</li>
+		  <li>Menggunakan fasilitas perpustakaan dengan bijak dan bertanggung jawab.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h2 style="margin-bottom: 20px;">FAQ (Tanya Jawab)</h2>
+      <div class="faq-item active">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Bagaimana cara menjadi anggota perpustakaan?
+          <span class="material-icons-round faq-icon">expand_more</span>
+        </div>
+        <div class="faq-answer">Pengguna dapat mendaftar melalui website perpustakaan atau langsung datang ke bagian layanan dengan membawa kartu identitas.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Apakah peminjaman buku dikenakan biaya?
+          <span class="material-icons-round faq-icon">expand_more</span>
+        </div>
+        <div class="faq-answer">Tidak, layanan peminjaman buku gratis untuk seluruh anggota aktif perpustakaan.</div>
+      </div>
+     <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Berapa biaya keanggotaan?
+          <span class="material-icons-round faq-icon">expand_more</span>
+        </div>
+        <div class="faq-answer">Pendaftaran anggota baru Gratis untuk semua kalangan</div>
+      </div>
+	  <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+         Berapa lama masa peminjaman buku?
+          <span class="material-icons-round faq-icon">expand_more</span>
+        </div>
+        <div class="faq-answer">Masa peminjaman buku adalah 7 hari dan dapat diperpanjang apabila buku belum dipesan pengguna lain.</div>
+      </div>
+	  <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Bagaimana jika buku terlambat dikembalikan?
+          <span class="material-icons-round faq-icon">expand_more</span>
+        </div>
+        <div class="faq-answer">Pengguna akan dikenakan denda sesuai ketentuan perpustakaan.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA & BERITA -->
+<section class="section-padding" style="background: #F9FAFB;" id="events">
+  <div class="container">
+    <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+      <h2>Agenda & Berita</h2>
+      <p style="color: var(--text-soft);">Ikuti kegiatan terbaru di perpustakaan</p>
+    </div>
+
+    <!-- Agenda -->
+    <h3 style="margin-bottom: 20px;">Agenda Kegiatan</h3>
+    <div class="event-card">
+      <div class="event-date">
+        <span class="day">15</span>
+        <span>Nov 2025</span>
+      </div>
+      <div class="event-content">
+        <h4>Workshop Literasi Digital untuk Pelajar</h4>
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 10px;">Pelatihan cara mencari sumber jurnal yang valid dan aman dari hoaks.</p>
+      </div>
+    </div>
+	<div class="event-card">
+      <div class="event-date">
+        <span class="day">05</span>
+        <span>Jan 2026</span>
+      </div>
+      <div class="event-content">
+        <h4>Hari Donor Darah & Literasi Kesehatan</h4>
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 10px;">Aksi sosial donor darah yang dikombinasikan dengan edukasi serta penyuluhan pentingnya menjaga kesehatan tubuh.</p>
+      </div>
+    </div>
+	<div class="event-card">
+      <div class="event-date">
+        <span class="day">12</span>
+        <span>Mar 2026</span>
+      </div>
+      <div class="event-content">
+        <h4>Workshop Menulis Cerpen Remaja.</h4>
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 10px;">Pelatihan khusus bagi remaja untuk belajar teknik merangkai cerita pendek yang menarik dan kreatif.</p>
+      </div>
+    </div>
+	<div class="event-card">
+      <div class="event-date">
+        <span class="day">17</span>
+        <span>Mei 2026</span>
+      </div>
+      <div class="event-content">
+        <h4>Hari Buku Nasional & Pemberian Penghargaan Pengunjung Teraktif</h4>
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 10px;"> Perayaan hari buku nasional sekaligus apresiasi berupa hadiah bagi anggota perpustakaan yang paling sering meminjam buku.</p>
+      </div>
+    </div>
+	
+
+    <!-- Berita -->
+    <h3 style="margin-bottom: 20px; margin-top: 40px;">Berita Terbaru</h3>
+    <div class="news-grid">
+      <a href="https://news.detik.com/berita/d-8497137/libur-panjang-idul-adha-2026-sampai-tanggal-berapa-ini-jadwalnya" class="news-card">
+        <div class="news-img">
+          <img src="Berita1.jpg" alt="News 1">
+        </div>
+        <div class="news-body">
+          <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 700;">PENGUMUMAN</span>
+          <h4 style="margin: 5px 0;">Libur Layanan Selama Idul Adha</h4>
+          <p style="font-size: 0.9rem; color: var(--text-soft);">Perpustakaan akan tutup mulai tanggal 26-30 Mei 2026</p>
+        </div>
+      </a>
+      <a href="https://news.detik.com/berita/d-8458013/minat-baca-gen-z-tinggi-waka-mpr-harus-dimanfaatkan-sebaik-baiknya/" class="news-card">
+        <div class="news-img">
+          <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=400" alt="News 2">
+        </div>
+        <div class="news-body">
+          <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 700;">BERITA</span>
+          <h4 style="margin: 5px 0;">Minat Baca Gen Z Tinggi</h4>
+          <p style="font-size: 0.9rem; color: var(--text-soft);">Waka MPR: Harus Dimanfaatkan Sebaik-baiknya</p>
+        </div>
+      </a>
+    </div>
+	<h3 style="margin-bottom: 20px; margin-top: 40px;"></h3>
+    <div class="news-grid">
+      <a href="https://www.detik.com/edu/edutainment/d-8486715/gen-z-malas-membaca-ketua-ikapi-ungkap-faktanya" class="news-card">
+        <div class="news-img">
+          <img src="Berita2.jpeg" alt="News 1">
+        </div>
+        <div class="news-body">
+          <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 700;">BERITA</span>
+          <h4 style="margin: 5px 0;">Gen Z Malas Membaca? Ketua IKAPI Ungkap Faktanya</h4>
+          <p style="font-size: 0.9rem; color: var(--text-soft);"></p>
+        </div>
+      </a>
+      <a href="https://www.koranmanado.co.id/gen-z-minat-baca-digital?utm_source=chatgpt.com" class="news-card">
+        <div class="news-img">
+          <img src="Berita3.jpg" alt="News 2">
+        </div>
+        <div class="news-body">
+          <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 700;">BERITA</span>
+          <h4 style="margin: 5px 0;">Generasi Z Tunjukkan Minat Baca Tinggi di Tengah Gempuran Digital</h4>
+          <p style="font-size: 0.9rem; color: var(--text-soft);"></p>
+        </div>
+      </a>
+    </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT US -->
+<section class="section-padding container" id="contact">
+  <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+    <h2>Hubungi Kami</h2>
+    <p style="color: var(--text-soft);">Kami siap membantu Anda</p>
+  </div>
+
+  <div class="contact-grid">
+    <div class="contact-form">
+      <h3 style="margin-bottom: 20px;">Kirim Pesan</h3>
+      <form onsubmit="handleContact(event)">
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" class="form-control" required placeholder="Masukkan nama anda">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control" required placeholder="email@contoh.com">
+        </div>
+        <div class="form-group">
+          <label>Pesan</label>
+          <textarea class="form-control" rows="5" required placeholder="Tulis pesan anda disini..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Kirim Pesan</button>
+      </form>
+      
+      <div style="margin-top: 30px;">
+        <p style="margin-bottom: 10px;"><span class="material-icons-round" style="font-size: 16px; vertical-align: text-bottom; color: var(--accent-pink);">location_on</span> Jl. Banjar Arum No.D15 Kec.Taman Madiun</p>
+        <p style="margin-bottom: 10px;"><span class="material-icons-round" style="font-size: 16px; vertical-align: text-bottom; color: var(--accent-pink);">phone</span> +62 823 3436 0397</p>
+        <p><span class="material-icons-round" style="font-size: 16px; vertical-align: text-bottom; color: var(--accent-pink);">email</span> gdbklibrary4@gmail.com</p>
+      </div>
+    </div>
+
+    <div class="map-container">
+      <!-- Google Maps Embed Placeholder -->
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d386.16122172082333!2d111.53080787668554!3d-7.651835699999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e79be83ae01a13d%3A0x85e52fc6b285ec70!2sJl.%20Banjar%20Arum%20No.d13%2C%20Banjarejo%2C%20Kec.%20Taman%2C%20Kota%20Madiun%2C%20Jawa%20Timur%2063137!5e1!3m2!1sid!2sid!4v1779278655900!5m2!1sid!2sid"
+        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <a href="#" class="logo" style="margin-bottom: 20px; display: inline-block;">
+        <span class="material-icons-round" style="color:var(--accent-pink)">auto_stories</span>
+        Good<span>Book</span>
+      </a>
+      <p style="color: var(--text-soft); line-height: 1.8;">Membangun masyarakat pembudaya yang cerdas dan kritis melalui akses informasi yang mudah dan cepat.</p>
+    </div>
+    <div>
+      <h4 style="margin-bottom: 20px;">Tautan Cepat</h4>
+      <ul style="color: var(--text-soft);">
+        <li style="margin-bottom: 10px;"><a href="#profile">Profil</a></li>
+        <li style="margin-bottom: 10px;"><a href="#catalog">Katalog Buku</a></li>
+        <li style="margin-bottom: 10px;"><a href="#faq">Syarat & Ketentuan</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin-bottom: 20px;">Jam Operasional</h4>
+      <p style="color: var(--text-soft); font-size: 0.9rem;">
+        Senin - Jumat: 08.00 - 20.00 WIB<br>
+        Sabtu - Minggu: 09.00 - 17.00 WIB<br>
+        <span style="color: var(--accent-pink); font-size: 0.8rem;">*Libur Nasional Tutup</span>
+      </p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    &copy; 2024 Nove Library. All Rights Reserved.
+  </div>
+</footer>
+
+<!-- MODAL DETAIL BUKU -->
+<div class="modal-overlay" id="bookModal">
+  <div class="modal-box">
+    <button class="close-modal" onclick="closeModal()">
+      <span class="material-icons-round">close</span>
+    </button>
+    <div class="modal-img">
+      <img id="mImg" src="" alt="Cover">
+    </div>
+    <div class="modal-info">
+      <span id="mCat" style="background: var(--accent-pink-light); color: var(--accent-pink-dark); padding: 5px 10px; border-radius: 10px; font-size: 0.8rem; font-weight: 700;">Kategori</span>
+      <h2 id="mTitle" style="margin: 10px 0;">Judul book</h2>
+      <h4 id="mAuthor" style="font-family: 'Plus Jakarta Sans'; color: var(--text-soft); font-weight: 500; margin-bottom: 20px;">Penulis</h4>
+      <p id="mDesc" style="color: var(--text-soft); margin-bottom: 25px; font-size: 0.95rem;">Deskripsi...</p>
+      
+      <!-- CONTAINER TOMBOL -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="showToast('Buku berhasil dipinjam!')">Pinjam Buku</button>
+          <button class="btn btn-secondary" onclick="showToast('Disimpan ke Favorit')"><span class="material-icons-round">favorite</span></button>
+        </div>
+
+        <!-- === TOMBOL SINOPSIS (SUDAH DIPERBAIKI) === -->
+        <button id="btnSynopsis" class="btn btn-outline" 
+                style="width: 100%; border: 1px solid var(--accent-pink); color: var(--accent-pink); background: transparent; font-weight: 600; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s;">
+          Baca Sinopsis Lengkap
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="toast">
+  <span class="material-icons-round" style="color: var(--accent-green);">check_circle</span>
+  <span id="toastMsg">Pesan terkirim!</span>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+  // --- DATA BUKU (OPAC) ---
+  const books = [
+    { 
+      id: 1, 
+      title: "Laskar Pelangi", 
+      author: "Andrea Hirata", 
+      category: "Buku Fiksi", 
+      img: "laskarpelangi.jpeg", 
+      desc: "Kisah inspiratif sekelompok anak di Belitong.",
+      link: "Sinopsis Buku 3.html" 
+    },
+    { 
+      id: 2, 
+      title: "Midnight Library", 
+      author: "Matt Haig", 
+      category: "Buku Fiksi", 
+      img: "buku 2.jpeg", 
+      desc: "Fiksi Psikologi, Novel tentang kesempatan kedua dalam hidup.",
+      link: "Sinopsis Buku 2.html" 
+    },
+    { 
+      id: 3, 
+      title: "ChatGPT for chatting and searching: Repurposing search behavior", 
+      author: "Marcelo Tibau et ell.", 
+      category: "Jurnal", 
+      img: "Jurnal 1.jpeg", 
+      desc: "Jurnal ini mengkaji bagaimana pengguna mengalihfungsikan ChatGPT dari sekadar alat percakapan menjadi mesin pencari informasi dalam aktivitas sehari-hari..",
+      link: "JurnalHalaman.html" 
+    },
+    { 
+      id: 4, 
+      title: "The Pshycology of Money", 
+      author: "Morgan Housel", 
+      category: "Buku Pelajaran", 
+      img: "buku 1.jpeg", 
+      desc: "Memahami perilaku manusia dalam mengelola uang.",
+      link: "Sinopsis Buku 1.html" 
+    },
+    { 
+      id: 5, 
+      title: "Bumi", 
+      author: "Tere Liye", 
+      category: "Buku Fiksi", 
+      img: "Buku4.jpg", 
+      desc: "Petualangan seru Raib dan kawan-kawan menjelajahi dunia paralel.",
+      link: "sinopsis buku 4.html" 
+    },
+    { 
+      id: 6, 
+      title: "Buku Ajar Biologi Sel dan Molekuler", 
+      author: "Hebert Adrianto", 
+      category: "Buku Pelajaran", 
+      img: "buku5.jpg", 
+      desc: "Panduan lengkap memahami struktur dan fungsi sel hingga tingkat molekuler.",
+      link: "Sinopsis Buku 5.html" 
+    },
+      { 
+      id: 7, 
+      title: "Pengaruh Penggunaan Bahan Ajar Pembelajaran Berbasis E-Learning Dengan Menggunakan Aplikasi Telegram pada Mata Pembelajaran Sejarah di SMAN 1 Kotabaru", 
+      author: "M. Ian Erwin Najamudin", 
+      category: "Skripsi", 
+      img: "Cover1.jpeg", 
+      desc: "",
+      link: "Skripsi 1.html" 
+    },
+	{ 
+      id: 8, 
+      title: "Peluang dan Tantangan Pemanfaatan Teknologi AI dalam Dunia Pendidikan", 
+      author: "Dane Keisya Purnama et all", 
+      category: "Jurnal", 
+      img: "Jurnal 2.jpeg", 
+      desc: "",
+      link: "JurnalHalaman2.html" 
+    },
+	{ 
+      id: 9, 
+      title: "Information Science", 
+      author: "Judith Pintar & David Hopping", 
+      category: "Buku Pelajaran", 
+      img: "Buku6.jpeg", 
+      desc: "Pengantar konsep dasar ilmu informasi dan pengelolaannya",
+      link: "Sinopsis Buku 6.html" 
+    },
+	 { 
+      id: 7, 
+      title:"Analisis Faktor-Faktor yang Mmempengaruhi Tingkat Kesejahteraan Juru Parkir di Lokasi Parkir Kawasan II Kota Yogyakarta", 
+      author: "Arif Suryanda", 
+      category: "Skripsi", 
+      img: "Cover2.jpeg", 
+      desc: "",
+      link: "Skripsi2.html" 
+    }
+  ];
+
+  // --- RENDER BUKU ---
+  const bookGrid = document.getElementById('bookGrid');
+  
+  function renderBooks(data) {
+    bookGrid.innerHTML = '';
+    data.forEach(book => {
+      const el = document.createElement('div');
+      el.className = 'book-item';
+      el.innerHTML = `
+        <div class="book-cover">
+          <img src="${book.img}" alt="${book.title}">
+          <div class="book-overlay">
+            <button class="btn btn-primary" style="padding: 8px 15px; font-size: 0.8rem;" onclick="openModal(${book.id})">Detail</button>
+          </div>
+        </div>
+        <div class="book-details">
+          <div class="book-title">${book.title}</div>
+          <div class="book-author">${book.author}</div>
+        </div>
+      `;
+      bookGrid.appendChild(el);
+    });
+  }
+
+  // Initial Render
+  renderBooks(books);
+
+  // --- FILTER & SEARCH ---
+  function filterBooks(cat, btn) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+
+    if (cat === 'all') {
+      renderBooks(books);
+    } else {
+      const filtered = books.filter(b => b.category === cat);
+      renderBooks(filtered);
+    }
+    document.getElementById('searchInput').value = '';
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = books.filter(b => 
+      b.title.toLowerCase().includes(query) || 
+      b.author.toLowerCase().includes(query)
+    );
+    renderBooks(filtered);
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  });
+
+  // --- TABS (PROFILE) ---
+  function openTab(evt, tabName) {
+    const tabContent = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabContent.length; i++) {
+      tabContent[i].style.display = "none";
+      tabContent[i].classList.remove("active");
+    }
+    const tabBtns = document.getElementsByClassName("tab-btn");
+    for (let i = 0; i < tabBtns.length; i++) {
+      tabBtns[i].className = tabBtns[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.className += " active";
+  }
+
+  // --- FAQ ACCORDION ---
+  function toggleFaq(element) {
+    const item = element.parentElement;
+    item.classList.toggle('active');
+  }
+
+  // --- MODAL LOGIC ---
+  const modal = document.getElementById('bookModal');
+  function openModal(id) {
+    const book = books.find(b => b.id === id);
+    document.getElementById('mImg').src = book.img;
+    document.getElementById('mTitle').innerText = book.title;
+    document.getElementById('mAuthor').innerText = book.author;
+    document.getElementById('mCat').innerText = book.category;
+    document.getElementById('mDesc').innerText = book.desc;
+
+    const btnSynopsis = document.getElementById('btnSynopsis');
+    if (book.link) {
+      btnSynopsis.style.display = 'block';
+      btnSynopsis.onclick = function() {
+        window.location.href = book.link;
+      };
+    } else {
+      btnSynopsis.style.display = 'none';
+    }
+
+    modal.classList.add('active');
+  }
+  function closeModal() {
+    modal.classList.remove('active');
+  }
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal) closeModal();
+  });
+
+  // --- TOAST NOTIFICATION ---
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // --- CONTACT FORM HANDLER ---
+  function handleContact(e) {
+    e.preventDefault();
+    showToast("Pesan Anda telah terkirim!");
+    e.target.reset();
+  }
+
+  // --- MOBILE MENU ---
+  function toggleMenu() {
+    document.getElementById('navMenu').classList.toggle('active');
+  }
+
+  // ==========================================
+  // === LOGIKA MUSIC PLAYER (MULTIMEDIA) ===
+  // ==========================================
+  
+  const musicPlaylist = [
+    {
+      title: "Mars Universitas Diponegoro",
+      artist: "Universitas Diponegoro",
+      cover: "https://fisip.undip.ac.id/wp-content/uploads/2022/03/Undip-scaled.jpg",
+      src: "MarsUndip.mpeg", 
+      duration: "01:22"
+    },
+    {
+      title: "Spring Day",
+      artist: "BTS",
+      cover: "https://i.scdn.co/image/ab67616d0000b2731fd0a8fc28b2a0a5d9cdc6c6",
+      src: "bts.mpeg",
+      duration: "04:40"
+    },
+    {
+      title: "Ditto",
+      artist: "Newjeans",
+      cover: "data:image/jpeg;base64,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",
+      src: "nwjns.mpeg",
+      duration: "03:08"
+    },
+    {
+      title: "Love Warning",
+      artist: "Kamikaze",
+      cover: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAYofOoxd0gtMSAUE-EDII7g9FEk-vVCzCP_-3kWFI4EjFv3K8Rha5z4XkQaQbRrgVFiS23SOTKq6SkCfno0kchml4PaLFoLJCYGy1C0M2b57Gy2MlG0H9LtBMn1sexMWSCsUv4o7HypCF/s640/THIRD_Lovewarning_01_850.jpg",
+      src: "alipa.mpeg",
+      duration: "03:32"
+    },
+    {
+      title: "Baby",
+      artist: "Justin Bieber",
+      cover: "https://i.scdn.co/image/ab67616d0000b273629dc9e2e3bc20bbd7d92e4a",
+      src: "faza.mpeg",
+      duration: "04:55"
+    }
+  ];
+
+  let currentSongIndex = 0;
+  let isPlaying = false;
+  let audio = new Audio();
+  let updateTimer;
+
+  // Load Lagu
+  function loadSong(index) {
+    const song = musicPlaylist[index];
+    audio.src = song.src;
+    audio.load();
+    
+    // Update UI Player
+    document.getElementById('mainTitle').innerText = song.title;
+    document.getElementById('mainArtist').innerText = song.artist;
+    document.getElementById('mainDisc').src = song.cover;
+    
+    // Update Playlist UI
+    renderPlaylist();
+  }
+
+  // Render Playlist Item
+  function renderPlaylist() {
+    const container = document.getElementById('songListContainer');
+    container.innerHTML = '';
+    
+    musicPlaylist.forEach((song, index) => {
+      const div = document.createElement('div');
+      div.className = `song-item ${index === currentSongIndex ? 'active' : ''}`;
+      div.onclick = () => {
+        currentSongIndex = index;
+        loadSong(currentSongIndex);
+        playSong();
+      };
+      
+      div.innerHTML = `
+        <img src="${song.cover}" class="song-thumb" alt="thumb">
+        <div class="song-info">
+          <div class="song-title">${song.title}</div>
+          <div class="song-artist">${song.artist}</div>
+        </div>
+        <div class="play-icon-small">
+          <span class="material-icons-round">${index === currentSongIndex && isPlaying ? 'pause' : 'play_arrow'}</span>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // Play / Pause Logic
+  function togglePlay() {
+    if (isPlaying) {
+      pauseSong();
+    } else {
+      playSong();
+    }
+  }
+
+  function playSong() {
+    isPlaying = true;
+    audio.play().catch(e => {
+      console.log("Audio play failed (user interaction needed first):", e);
+      showToast("Klik Play untuk memulai audio");
+    });
+    
+    document.getElementById('playPauseBtn').innerHTML = '<span class="material-icons-round">pause</span>';
+    document.getElementById('mainDisc').classList.add('playing');
+    
+    // Reset timer jika ada
+    clearInterval(updateTimer);
+    updateTimer = setInterval(seekUpdate, 1000);
+    
+    // Update icon di playlist
+    renderPlaylist();
+  }
+
+  function pauseSong() {
+    isPlaying = false;
+    audio.pause();
+    document.getElementById('playPauseBtn').innerHTML = '<span class="material-icons-round">play_arrow</span>';
+    document.getElementById('mainDisc').classList.remove('playing');
+    clearInterval(updateTimer);
+    renderPlaylist();
+  }
+
+  function nextSong() {
+    currentSongIndex++;
+    if (currentSongIndex >= musicPlaylist.length) {
+      currentSongIndex = 0;
+    }
+    loadSong(currentSongIndex);
+    if(isPlaying) playSong();
+  }
+
+  function prevSong() {
+    currentSongIndex--;
+    if (currentSongIndex < 0) {
+      currentSongIndex = musicPlaylist.length - 1;
+    }
+    loadSong(currentSongIndex);
+    if(isPlaying) playSong();
+  }
+
+  // Update Progress Bar & Time
+  function seekUpdate() {
+    let seekPosition = 0;
+    
+    if (!isNaN(audio.duration)) {
+      seekPosition = audio.currentTime * (100 / audio.duration);
+      document.getElementById('progressCurrent').style.width = seekPosition + "%";
+      
+      // Current Time
+      let currentMinutes = Math.floor(audio.currentTime / 60);
+      let currentSeconds = Math.floor(audio.currentTime - currentMinutes * 60);
+      if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
+      document.getElementById('currentTime').innerText = currentMinutes + ":" + currentSeconds;
+      
+      // Duration
+      let durationMinutes = Math.floor(audio.duration / 60);
+      let durationSeconds = Math.floor(audio.duration - durationMinutes * 60);
+      if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
+      document.getElementById('durationTime').innerText = durationMinutes + ":" + durationSeconds;
+    }
+  }
+
+  // Klik pada progress bar untuk seek
+  const progressArea = document.getElementById('progressBar');
+  progressArea.addEventListener('click', function(e) {
+    let width = this.clientWidth;
+    let clickX = e.offsetX;
+    let duration = audio.duration;
+    audio.currentTime = (clickX / width) * duration;
+    playSong();
+  });
+
+  // Event listener ketika lagu selesai
+  audio.addEventListener('ended', nextSong);
+
+  // Inisialisasi Player saat load
+  window.addEventListener('DOMContentLoaded', () => {
+    loadSong(currentSongIndex);
+    renderPlaylist();
+  });
+
+</script>
+
+</body>
+</html>

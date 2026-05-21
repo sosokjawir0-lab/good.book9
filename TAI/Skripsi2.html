@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Buku - Nove Library</title>
+<!-- Font yang sama dengan template sebelumnya -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+<style>
+  /* --- VARIABEL TEMA (SOFT PINK & GREEN) --- */
+  :root {
+    --bg-body: #FFF5F7;        /* Background pink sangat muda */
+    --bg-card: #FFFFFF;        /* Putih untuk konten */
+    --accent-pink: #F472B6;    /* Warna Pink Utama */
+    --accent-green: #34D399;   /* Warna Hijau Mint */
+    --text-main: #374151;      /* Warna Teks Gelap */
+    --text-muted: #9CA3AF;     /* Warna Teks Abu */
+    --shadow-soft: 0 10px 40px rgba(244, 114, 182, 0.1);
+    --radius-xl: 24px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background-color: var(--bg-body); 
+    color: var(--text-main); 
+    min-height: 100vh;
+    display: flex; 
+    flex-direction: column;
+  }
+
+  h1, h2, h3 { font-family: 'Playfair Display', serif; color: var(--text-main); }
+  a { text-decoration: none; color: inherit; }
+
+ /* --- COMPONENTS --- */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .section-padding { padding: 80px 0; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; border: none;
+  }
+  .btn-primary { background: var(--accent-pink); color: white; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4); }
+  .btn-primary:hover { background: var(--accent-pink-dark); transform: translateY(-2px); }
+  .btn-secondary { background: white; color: var(--text-main); border: 2px solid #FBCFE8; }
+  .btn-secondary:hover { border-color: var(--accent-pink); color: var(--accent-pink); }
+  .btn-green { background: var(--accent-green); color: white; }
+  .btn-green:hover { background: var(--accent-green-dark); }
+
+    /* --- NAVIGATION --- */
+  nav {
+    position: sticky; 
+    top: 20px; 
+    margin: 0 20px; 
+    width: calc(100% - 40px);
+    max-width: 1200px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    background: var(--glass-bg); 
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border); 
+    border-radius: 100px;
+    z-index: 1000; 
+    box-shadow: var(--shadow-sm);
+    height: 70px;                  
+    display: flex; 
+    align-items: center;           
+    justify-content: space-between; 
+    padding: 0 30px;
+  }
+
+  .logo { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--text-main); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    font-family: 'Playfair Display', serif; 
+  }
+  .logo span { color: var(--accent-pink); }
+  
+  .nav-menu { 
+    display: flex; 
+    gap: 15px; 
+    margin: 0;  
+    padding: 0; 
+  }
+
+  .nav-menu a { 
+    font-size: 16px; 
+    font-weight: 600; 
+    color: var(--text-main); 
+    position: relative;
+    display: inline-flex; 
+    align-items: center;  
+    height: 100%;         
+  }
+  
+  .nav-menu a:hover, .nav-menu a.active { color: var(--accent-pink); }
+  
+  .mobile-toggle { 
+    display: none; 
+    font-size: 28px; 
+    cursor: pointer; 
+  }
+
+
+
+  /* --- CONTAINER UTAMA --- */
+  .container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    flex: 1; 
+  }
+
+  .breadcrumb {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .breadcrumb span { margin: 0 5px; }
+
+  /* --- KARTU DETAIL BUKU --- */
+  .book-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    position: relative; /* Penting untuk stacking context */
+    z-index: 1;
+  }
+
+  .book-cover-section {
+    flex-shrink: 0;
+    width: 300px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .book-cover-img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    object-fit: cover;
+    aspect-ratio: 2/3;
+    transition: transform 0.3s;
+  }
+  .book-cover-img:hover { transform: scale(1.02); }
+
+  .book-info-section { flex: 1; position: relative; z-index: 2; }
+
+  .category-badge {
+    display: inline-block;
+    background: #ECFDF5;
+    color: #059669;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+  }
+
+  .book-title {
+    font-size: 1.3rem;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .book-author {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    font-style: italic;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px dashed #FBCFE8;
+  }
+
+  .meta-item { text-align: center; }
+  .meta-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  .meta-value { font-weight: 600; color: var(--text-main); }
+
+  .synopsis-title {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--accent-pink);
+  }
+
+  .synopsis-text {
+    line-height: 1.8;
+    color: #4B5563;
+    margin-bottom: 40px;
+    font-size: 1rem;
+    text-align: justify;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn {
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex; 
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    text-decoration: none;
+  }
+
+  .btn-pink {
+    background: var(--accent-pink);
+    color: white;
+    box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
+  }
+  .btn-pink:hover { background: #DB2777; transform: translateY(-2px); }
+
+  .btn-green {
+    background: var(--accent-green);
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 211, 153, 0.4);
+  }
+  .btn-green:hover { background: #059669; transform: translateY(-2px); }
+
+  /* --- RESPONSIVE (HP) --- */
+  @media (max-width: 768px) {
+    .book-card { 
+      flex-direction: column; 
+      padding: 25px;
+      gap: 30px;
+    }
+    .book-cover-section { 
+      width: 100%; 
+      max-width: 250px; 
+      margin: 0 auto; 
+    }
+    .book-title { font-size: 1.8rem; text-align: center; }
+    .book-author { text-align: center; }
+    .action-buttons { flex-direction: column; }
+    .btn { justify-content: center; }
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: auto;
+  }
+</style>
+</style>
+</head>
+<body>
+
+  <!-- NAVIGASI -->
+  <nav>
+    <a href="Salinan 2.html" class="nav-logo">
+      <span class="material-icons-round">auto_stories</span> Good Book
+    </a>
+    <a href="Salinan 2.html" class="back-link">
+      <span class="material-icons-round" style="font-size: 18px;">arrow_back</span> Kembali ke Katalog
+    </a>
+  </nav>
+
+  <!-- KONTEN UTAMA -->
+  <div class="container">
+    
+    <!-- KARTU BUKU -->
+    <div class="book-card">
+      
+      <!-- BAGIAN 1: COVER BUKU -->
+	  <div class="book-cover-section">
+        <img src="Cover2.jpeg" 
+             alt="Cover Buku" 
+             class="book-cover-img">
+      </div>
+
+      <!-- BAGIAN 2: INFORMASI & SINOPSIS -->
+      <div class="book-info-section">
+        
+        <!-- Kategori Buku -->
+        <span class="category-badge">Skripsi</span>
+
+        <!-- Judul Buku -->
+        <h1 class="book-title">ANALISIS FAKTOR-FAKTOR YANG MEMPENGARUHI TINGKAT KESEJAHTERAAN JURU PARKIR DI LOKASI PARKIR KAWASAN II KOTA YOGYAKARTA</h1>
+        
+        <!-- Penulis -->
+        <p class="book-author">Oleh <strong>ARIF SURYANDA</strong></p>
+
+        <!-- Grid Informasi (Tahun, Halaman, Bahasa) -->
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">Tahun Terbit</div>
+            <div class="meta-value">2017</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Halaman</div>
+            <div class="meta-value">117 Hal</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Bahasa</div>
+            <div class="meta-value">Indonesia</div>
+          </div>
+        </div>
+
+        <!-- Judul Sinopsis -->
+        <h3 class="synopsis-title">Abstrak</h3>
+
+        <!-- ISI TEKS SINOPSIS -->
+        <div class="synopsis-text">
+          <p>
+            Penelitian ini membahas faktor-faktor yang memengaruhi tingkat kesejahteraan juru parkir di Lokasi Parkir Kawasan II Kota Yogyakarta. 
+			Tujuan penelitian adalah mengetahui profil kesejahteraan juru parkir serta menganalisis pengaruh masa kerja, pendidikan, dan taraf serta pola konsumsi terhadap tingkat kesejahteraan mereka.
+          </p>
+          <br>
+          <p>
+             Penelitian menggunakan metode deskriptif dengan indikator kesejahteraan BPS 2007 dan analisis regresi logistik biner. Teknik pengambilan sampel dilakukan dengan teknik haphazard sampling.
+          </p>
+		  <br>
+		  <p>
+		  Hasil penelitian menunjukkan bahwa indikator kesejahteraan tertinggi terdapat pada aspek perumahan dan lingkungan, sedangkan indikator terendah berada pada aspek ketenagakerjaan. 
+		  Penelitian ini juga menunjukkan bahwa kondisi pekerjaan sektor informal, khususnya juru parkir, masih menghadapi berbagai kendala ekonomi dan sosial yang memengaruhi kesejahteraan hidup mereka. 
+          </p>
+        </div>
+
+        <!-- =========================================
+             BAGIAN PENTING: TOMBOL DOWNLOAD PDF
+             ========================================= -->
+        <div class="action-buttons">
+          
+          <!-- Tombol 1: Download PDF -->
+          <!-- Ganti 'buku1.pdf' dengan nama file PDF Anda yang asli -->
+          <a href="skripsi2.pdf" download="skripsi2.pdf" class="btn btn-pink">
+            <span class="material-icons-round">download</span> Download PDF
+          </a>
+
+          <!-- Tombol 2: Baca Online (Preview) -->
+          <!-- target="_blank" membuka PDF di tab baru -->
+          <a href="skripsi2.pdf" target="_blank" class="btn btn-green">
+            <span class="material-icons-round">visibility</span> Baca Sampel
+          </a>
+
+        </div>
+        <!-- AKHIR TOMBOL AKSI -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2024 Good Book. Tema Soft Pink & Green.
+  </footer>
+
+</body>
+</html>
